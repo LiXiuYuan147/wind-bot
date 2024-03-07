@@ -2,8 +2,8 @@ package woaini.fenger.bot.core.adapter;
 
 import lombok.Data;
 import woaini.fenger.bot.core.bot.Bot;
-import woaini.fenger.bot.core.event.base.ActionRequest;
-import woaini.fenger.bot.core.event.base.ActionResponse;
+import woaini.fenger.bot.core.event.action.ActionRequest;
+import woaini.fenger.bot.core.event.action.ActionResponse;
 import woaini.fenger.bot.core.event.base.Event;
 
 /**
@@ -52,12 +52,12 @@ public abstract class Adapter {
   /**
    * @MethodName encode
    *
-   * @param event 活动
+   * @param action 请求
    * @author yefeng {@date 2024-03-05 11:25:17}
    * @since 1.0
    * @return {@link String } 将event转换为原生消息
    */
-  public abstract String encode(Event event);
+  public abstract String encode(ActionRequest action);
 
   /**
    * @MethodName action
@@ -68,4 +68,6 @@ public abstract class Adapter {
    * @return {@link ActionResponse } 行动 异步执行方法
    */
   public abstract ActionResponse action(ActionRequest actionRequest);
+
+  public abstract void close();
 }

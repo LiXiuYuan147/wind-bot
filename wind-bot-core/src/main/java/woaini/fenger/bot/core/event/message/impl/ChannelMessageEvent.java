@@ -2,18 +2,18 @@ package woaini.fenger.bot.core.event.message.impl;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
-import woaini.fenger.bot.core.event.message.Message;
+import woaini.fenger.bot.core.event.message.MessageEvent;
 
 /**
  * 两集群组接口 Guild-Channel
  *
- * @see woaini.fenger.bot.core.event.message.impl.ChannelMessage
+ * @see ChannelMessageEvent
  * @author yefeng {@code @Date} 2023-05-16 16:50:39
  */
 @Data
-public class ChannelMessage extends Message {
+public class ChannelMessageEvent extends MessageEvent {
 
-  public ChannelMessage() {
+  public ChannelMessageEvent() {
     this.setDetailType("channel");
   }
 

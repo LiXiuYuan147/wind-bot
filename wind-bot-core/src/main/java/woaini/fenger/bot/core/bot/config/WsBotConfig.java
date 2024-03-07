@@ -1,12 +1,15 @@
 package woaini.fenger.bot.core.bot.config;
 
+import lombok.Data;
+
 /**
  * WS机器人配置 需要的配置
  *
- * @see woaini.fenger.bot.core.bot.config.IWsBotConfig
+ * @see WsBotConfig
  * @author yefeng {@code @Date} 2023-05-16 16:50:39
  */
-public interface IWsBotConfig {
+@Data
+public class WsBotConfig extends BotConfig{
 
     /**
      * @MethodName getWsHost
@@ -17,8 +20,7 @@ public interface IWsBotConfig {
      * @return {@link String }
      * 获取%ws主机
      */
-    String getWsHost();
-
+    private String wsHost;
     /**
      * @MethodName reconnectionInterval
      *
@@ -26,8 +28,7 @@ public interface IWsBotConfig {
      * {@date 2024-03-05 11:36:03}
      * @since 1.0
      * @return int
-     * 重新连接间隔
+     * 重新连接间隔 单位 秒
      */
-    int reconnectionInterval();
-
+    private Integer reconnectionInterval;
 }

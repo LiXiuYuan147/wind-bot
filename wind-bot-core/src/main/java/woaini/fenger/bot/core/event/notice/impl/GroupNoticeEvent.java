@@ -1,21 +1,17 @@
-package woaini.fenger.bot.core.event.message.impl;
+package woaini.fenger.bot.core.event.notice.impl;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
-import woaini.fenger.bot.core.event.message.Message;
+import woaini.fenger.bot.core.event.notice.NoticeEvent;
 
 /**
- * 单级群组消息 Group
+ * 群组相关通知
  *
- * @see GroupMessage
+ * @see GroupNoticeEvent
  * @author yefeng {@code @Date} 2023-05-16 16:50:39
  */
 @Data
-public class GroupMessage extends Message {
-
-    public GroupMessage() {
-        this.setDetailType("group");
-    }
+public class GroupNoticeEvent extends NoticeEvent {
 
     /**
      * @see String 用户id
@@ -28,4 +24,7 @@ public class GroupMessage extends Message {
      */
     @JSONField(name = "group_id")
     private String groupId;
+
+    @JSONField(name = "operator_id")
+    private String operatorId;
 }

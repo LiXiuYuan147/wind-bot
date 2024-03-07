@@ -6,10 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
-import org.java_websocket.server.WebSocketServer;
 import woaini.fenger.bot.core.bot.Bot;
 import woaini.fenger.bot.core.bot.config.BotConfig;
-import woaini.fenger.bot.core.bot.config.IWsBotConfig;
+import woaini.fenger.bot.core.bot.config.WsBotConfig;
+import woaini.fenger.bot.core.event.action.ActionRequest;
+import woaini.fenger.bot.core.event.action.ActionResponse;
 import woaini.fenger.bot.core.event.base.Event;
 
 import java.net.URI;
@@ -38,7 +39,7 @@ public abstract class WsAdapter extends Adapter {
     public void init(){
 
         //获取ws链接
-        IWsBotConfig wsBotConfig = (IWsBotConfig) botConfig;
+        WsBotConfig wsBotConfig = (WsBotConfig) botConfig;
         String wsHost = wsBotConfig.getWsHost();
 
         Map<String, Object> params = botConfig.getParams();
@@ -96,5 +97,12 @@ public abstract class WsAdapter extends Adapter {
     public boolean reconnect() {
         webSocketClient.reconnect();
         return false;
+    }
+
+    @Override
+    public ActionResponse action(ActionRequest actionRequest) {
+        String data = encode(actionRequest);
+        webSocketClient.send(data);
+        return null;
     }
 }

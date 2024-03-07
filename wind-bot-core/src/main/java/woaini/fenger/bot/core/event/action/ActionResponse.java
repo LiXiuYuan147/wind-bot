@@ -1,7 +1,6 @@
-package woaini.fenger.bot.core.event.base;
+package woaini.fenger.bot.core.event.action;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import woaini.fenger.bot.core.event.enums.ActionResponseStatus;
 
 import java.io.Serializable;
@@ -11,7 +10,7 @@ import java.util.Map;
 /**
  * 动作返回
  *
- * @see woaini.fenger.bot.core.event.base.ActionResponse
+ * @see ActionResponse
  * @author yefeng {@code @Date} 2023-05-16 16:50:39
  */
 @Data

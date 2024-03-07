@@ -6,11 +6,11 @@ import woaini.fenger.bot.core.event.enums.EventType;
 /**
  * 消息
  *
- * @see woaini.fenger.bot.core.event.message.Message
+ * @see MessageEvent
  * @author yefeng {@code @Date} 2023-05-16 16:50:39
  */
-public class Message extends Event {
-  public Message() {
+public abstract class MessageEvent extends Event {
+  public MessageEvent() {
     this.setType(EventType.message);
   }
 }

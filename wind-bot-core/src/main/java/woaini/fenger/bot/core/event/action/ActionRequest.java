@@ -1,13 +1,16 @@
-package woaini.fenger.bot.core.event.base;
+package woaini.fenger.bot.core.event.action;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+
+import cn.hutool.core.lang.UUID;
 import lombok.Data;
 
 /**
  * 动作请求
  *
- * @see woaini.fenger.bot.core.event.base.ActionRequest
+ * @see ActionRequest
  * @author yefeng {@code @Date} 2023-05-16 16:50:39
  */
 @Data
@@ -30,7 +33,7 @@ public class ActionRequest {
 
   public ActionRequest() {
     this.params = new HashMap<>(5);
+    this.echo = UUID.fastUUID().toString();
   }
-
 
 }

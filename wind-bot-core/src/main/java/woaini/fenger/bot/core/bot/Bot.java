@@ -4,8 +4,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import woaini.fenger.bot.core.adapter.Adapter;
 import woaini.fenger.bot.core.bot.config.BotConfig;
 import woaini.fenger.bot.core.bot.enums.BotStatus;
+import woaini.fenger.bot.core.event.action.ActionRequest;
+import woaini.fenger.bot.core.event.action.ActionResponse;
 import woaini.fenger.bot.core.event.base.Event;
 import woaini.fenger.bot.core.internal.Internal;
 
@@ -44,19 +47,15 @@ public abstract class Bot<T extends BotConfig> implements IBotEventHandler {
    */
   private String agreement;
 
-  /**
-   * @see Internal 方法
-   */
-  private Internal internal;
-
-  /**
-   * @see BlockingQueue<Event> 事件队列 所有Bot接受到的事件都放到这个队列里 然后由消费线程进行消费
-   */
-  private BlockingQueue<Event> EVENT_QUEUE = new LinkedBlockingQueue<>(1024);
-
+  public BotKey botKey(){
+    return new BotKey(selfId, platForm);
+  };
 
   public Bot(T config) {
     this.config = config;
+    this.selfId = config.getSelfId();
+    this.platForm = config.getPlatForm();
+    this.agreement = config.getAgreement();
     this.status = BotStatus.OFFLINE;
   }
 
@@ -68,18 +67,56 @@ public abstract class Bot<T extends BotConfig> implements IBotEventHandler {
     this.status = BotStatus.OFFLINE;
   }
 
-  @Override
-  public void addEvent(Event event) {
-    EVENT_QUEUE.add(event);
+  public void startWorker() {
+    if (this.sendAdapter() == null || this.receiveAdapter() == null){
+      return;
+    }
+    if (this.receiveAdapter() == this.sendAdapter()){
+      this.receiveAdapter().connect();
+    }else {
+      this.receiveAdapter().connect();
+      this.sendAdapter().connect();
+    }
   }
 
+  /**
+   * @MethodName close
+   *
+   * @author yefeng {@date 2024-03-06 17:39:54}
+   * @since 1.0
+   *     <p>需要实现关闭时干嘛
+   */
+  public abstract void close();
+
+  /**
+   * @MethodName receiveAdapter
+   *
+   * @author yefeng {@date 2024-03-06 16:18:25}
+   * @since 1.0
+   * @return {@link Adapter } 接收适配器
+   */
+  public abstract Adapter receiveAdapter();
+
+  /**
+   * @MethodName sendAdapter
+   *
+   * @author yefeng {@date 2024-03-06 16:18:27}
+   * @since 1.0
+   * @return {@link Adapter } 发送适配器
+   */
+  public abstract Adapter sendAdapter();
+
+  /**
+   * @MethodName internal
+   *
+   * @author yefeng {@date 2024-03-06 16:18:29}
+   * @since 1.0
+   * @return {@link Internal } 内部
+   */
+  public abstract Internal internal();
+
   @Override
-  public Event getEvent() {
-    try{
-      return EVENT_QUEUE.take();
-    }catch (Exception ex){
-      log.error("获取事件失败", ex);
-      return null;
-    }
+  public ActionResponse action(ActionRequest actionRequest) {
+    return this.sendAdapter().action(actionRequest);
   }
 }

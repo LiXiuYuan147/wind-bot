@@ -14,6 +14,7 @@
         <module>wind-bot-starter</module>
         <module>wind-bot-starter/wind-bot-starter-spring3</module>
         <module>wind-bot-service</module>
+        <module>win-bot-core-impl</module>
     </modules>
 
     <properties>
@@ -26,6 +27,7 @@
         <hutool.version>5.8.25</hutool.version>
         <ulid.version>1.0.4</ulid.version>
         <nlp2cron.version>2.0.BETA</nlp2cron.version>
+        <asyncTool.version>V1.4-79651da39d-1</asyncTool.version>
     </properties>
 
 
@@ -43,16 +45,18 @@
         </dependency>
 
         <dependency>
+            <groupId>com.gitee.jd-platform-opensource</groupId>
+            <artifactId>asyncTool</artifactId>
+            <version>${asyncTool.version}</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
 
-        <dependency>
-            <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2-extension-spring6</artifactId>
-            <version>${fastjson2.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.java-websocket</groupId>
@@ -60,7 +64,12 @@
             <version>${java-websocket.version}</version>
         </dependency>
     </dependencies>
-
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -70,6 +79,16 @@
                 <version>3.2.1</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.azam.ulidj</groupId>
+                <artifactId>ulidj</artifactId>
+                <version>${ulid.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2-extension-spring6</artifactId>
+                <version>${fastjson2.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

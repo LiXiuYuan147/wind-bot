@@ -7,13 +7,13 @@ import woaini.fenger.bot.core.event.enums.EventType;
 /**
  * 通知
  *
- * @see woaini.fenger.bot.core.event.notice.Notice
+ * @see NoticeEvent
  * @author yefeng {@code @Date} 2023-05-16 16:50:39
  */
 @Data
-public class Notice extends Event {
+public abstract class NoticeEvent extends Event {
 
-    public Notice() {
+    public NoticeEvent() {
         this.setType(EventType.notice);
     }
 }
