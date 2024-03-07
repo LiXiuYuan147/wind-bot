@@ -4,9 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
-import woaini.fenger.bot.code.impl.onebot.OneBot;
+import xx.wind.app.BotApplication;
 
-import static org.testng.Assert.*;
 @Slf4j
 @Test
 @SpringBootTest(classes = BotApplication.class)

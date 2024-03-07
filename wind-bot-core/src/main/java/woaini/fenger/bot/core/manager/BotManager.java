@@ -1,20 +1,23 @@
 package woaini.fenger.bot.core.manager;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson2.JSONObject;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import lombok.experimental.FieldNameConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.stereotype.Component;
 import woaini.fenger.bot.core.boot.ApplicationStartupCompleted;
 import woaini.fenger.bot.core.bot.Bot;
 import woaini.fenger.bot.core.bot.BotKey;
-import woaini.fenger.bot.core.bot.config.BotConfig;
 import woaini.fenger.bot.core.event.base.Event;
 import woaini.fenger.bot.core.eventbus.EventBus;
 import woaini.fenger.bot.core.utils.ThreadTool;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * BOT管理器 所有bot的顶层容器
@@ -24,12 +27,25 @@ import java.util.Map;
  */
 @Component
 @Slf4j
+@Import(cn.hutool.extra.spring.SpringUtil.class)
+@FieldNameConstants
 public class BotManager
     implements ApplicationListener<ContextClosedEvent>, ApplicationStartupCompleted {
   /**
    * @see Map<BotKey, Bot> 存储所有的bot
    */
-  private static final Map<BotKey, Bot> BOT_MAP = new HashMap<>();
+  private static final Map<BotKey, Bot> BOT_INSTANCE_MAP = new HashMap<>();
+
+  /**
+   * @see Map<String, Class<? extends Bot>> 存储所有的bot对应的bot类
+   */
+  private static final Map<String, Class<? extends Bot>> BOT_MAP = new HashMap<>();
+
+  public List<String> packages;
+
+  public void setPackages(List<String> packages) {
+    this.packages = packages;
+  }
 
   /**
    * @MethodName registerBot
@@ -42,20 +58,23 @@ public class BotManager
   public void registerBot(Bot bot) {
     bot.startWorker();
     // 获取对应的平台和协议对应的机器人
-    BOT_MAP.put(bot.botKey(), bot);
+    BOT_INSTANCE_MAP.put(bot.botKey(), bot);
   }
 
   @Override
   public void onApplicationEvent(ContextClosedEvent event) {
-    for (Bot bot : BOT_MAP.values()) {
+    for (Bot bot : BOT_INSTANCE_MAP.values()) {
       bot.close();
     }
   }
 
   @Override
   public void onInit() {
+    //启动消费线程
     BotManagerRunner botManagerRunner = new BotManagerRunner();
     ThreadTool.run(botManagerRunner);
+    //注入机器人对应的类
+//    SpringUtil.getBeansOfType();
   }
 
   /**

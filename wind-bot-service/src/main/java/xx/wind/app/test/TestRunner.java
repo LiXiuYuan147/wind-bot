@@ -1,6 +1,5 @@
-package woaini.fenger.bot.test;
+package xx.wind.app.test;
 import org.springframework.beans.factory.annotation.Autowired;
-import woaini.fenger.bot.core.bot.Bot;
 import woaini.fenger.bot.core.bot.enums.ConnectType;
 import java.util.HashMap;
 
@@ -15,7 +14,6 @@ public class TestRunner implements ApplicationStartupCompleted {
 
     @Autowired
     private BotManager botManager;
-
 
     @Override
     public void onInit() {

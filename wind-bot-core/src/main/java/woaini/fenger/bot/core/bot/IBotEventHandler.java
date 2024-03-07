@@ -1,6 +1,5 @@
 package woaini.fenger.bot.core.bot;
 
-import woaini.fenger.bot.core.adapter.Adapter;
 import woaini.fenger.bot.core.event.action.ActionRequest;
 import woaini.fenger.bot.core.event.action.ActionResponse;
 import woaini.fenger.bot.core.event.base.Event;
@@ -13,7 +12,6 @@ import woaini.fenger.bot.core.eventbus.EventBus;
  * @author yefeng {@code @Date} 2023-05-16 16:50:39
  */
 public interface IBotEventHandler {
-
 
   default void addEvent(Event event){
     EventBus.addEvent(event);

@@ -20,6 +20,11 @@ public class OneBot extends Bot<OneBotConfig> {
     private Adapter receiveAdapter;
 
 
+    @Override
+    public String agreement() {
+        return "OneBot12";
+    }
+
     public OneBot(OneBotConfig config) {
         super(config);
         init();

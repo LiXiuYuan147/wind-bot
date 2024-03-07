@@ -43,9 +43,9 @@ public abstract class Bot<T extends BotConfig> implements IBotEventHandler {
   private String platForm;
 
   /**
-   * @see String 协议 实际对接的协议 比如利用的那个第三方
+   * @see String 协议 实际对接的协议 比如利用的那个第三方 不同的协议对应不同的机器人类型
    */
-  private String agreement;
+  public abstract String agreement();
 
   public BotKey botKey(){
     return new BotKey(selfId, platForm);
@@ -55,7 +55,6 @@ public abstract class Bot<T extends BotConfig> implements IBotEventHandler {
     this.config = config;
     this.selfId = config.getSelfId();
     this.platForm = config.getPlatForm();
-    this.agreement = config.getAgreement();
     this.status = BotStatus.OFFLINE;
   }
 
