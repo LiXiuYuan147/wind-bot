@@ -11,7 +11,5 @@ wind-bot:
         receive-connect-type: REVERSE_WS
         send-connect-type: REVERSE_WS
         reverse-ws-port: 12000
-  cmd-prefix:
-    - '#'
-    - '/'
+  cmd-prefix: "#"
 

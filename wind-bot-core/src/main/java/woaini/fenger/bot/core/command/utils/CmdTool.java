@@ -124,12 +124,12 @@ public class CmdTool {
     return sqlBuilder.toString();
   }
 
-  public String buildHelp() {
+  public String buildHelp(String prefix) {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append("当前可用指令有\r\n");
     for (ICmd value : CmdInterceptor.cmdMaps.values()) {
       stringBuilder
-          .append("#")
+          .append(prefix)
           .append(value.masterCmdName())
           .append(":")
           .append(value.description())

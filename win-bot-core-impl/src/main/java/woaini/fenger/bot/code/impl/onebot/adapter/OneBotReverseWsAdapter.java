@@ -1,14 +1,21 @@
 package woaini.fenger.bot.code.impl.onebot.adapter;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSONObject;
 import woaini.fenger.bot.core.adapter.ReverseWsAdapter;
 import woaini.fenger.bot.core.bot.Bot;
 import woaini.fenger.bot.core.event.action.ActionRequest;
 import woaini.fenger.bot.core.event.base.Event;
 import woaini.fenger.bot.core.event.enums.EventType;
+import woaini.fenger.bot.core.event.message.impl.ChannelMessageEvent;
+import woaini.fenger.bot.core.event.message.impl.GroupMessageEvent;
+import woaini.fenger.bot.core.event.message.impl.PrivateMessageEvent;
 import woaini.fenger.bot.core.event.meta.impl.ConnectMateEvent;
 import woaini.fenger.bot.core.event.meta.impl.HeartbeatMateEvent;
 import woaini.fenger.bot.core.event.meta.impl.StatusUpdateMetaEvent;
+import woaini.fenger.bot.core.event.notice.impl.ChannelNoticeEvent;
+import woaini.fenger.bot.core.event.notice.impl.GroupNoticeEvent;
+import woaini.fenger.bot.core.event.notice.impl.PrivateNoticeEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,19 +43,51 @@ public class OneBotReverseWsAdapter extends ReverseWsAdapter {
     Event event = null;
     // 获取事件类型
     JSONObject source = JSONObject.parseObject(message);
-    EventType type = EventType.valueOf(source.getString("type"));
+    String typeString = source.getString("type");
+    if (StrUtil.isEmpty(typeString)){
+      return event;
+    }
+    EventType type = EventType.valueOf(typeString);
     String detailType = source.getString("detail_type");
     switch (type) {
       case meta -> {
         switch (detailType) {
           case "connect" -> {
-            event = source.toJavaObject(ConnectMateEvent.class);
+            event = JSONObject.parseObject(message,ConnectMateEvent.class);
           }
           case "heartbeat" -> {
-            event = source.toJavaObject(HeartbeatMateEvent.class);
+            event = JSONObject.parseObject(message,HeartbeatMateEvent.class);
           }
           case "status_update" -> {
-            event = source.toJavaObject(StatusUpdateMetaEvent.class);
+            event = JSONObject.parseObject(message,StatusUpdateMetaEvent.class);
+          }
+          case null, default -> {}
+        }
+      }
+      case message -> {
+        switch (detailType) {
+          case "private" -> {
+            event = JSONObject.parseObject(message,PrivateMessageEvent.class);
+          }
+          case "group" -> {
+            event =  JSONObject.parseObject(message,GroupMessageEvent.class);
+          }
+          case "channel" -> {
+            event = JSONObject.parseObject(message,ChannelMessageEvent.class);
+          }
+          case null, default -> {}
+        }
+      }
+      case notice -> {
+        switch (detailType) {
+          case "private" -> {
+            event = JSONObject.parseObject(message, PrivateNoticeEvent.class);
+          }
+          case "group" -> {
+            event =  JSONObject.parseObject(message, GroupNoticeEvent.class);
+          }
+          case "channel" -> {
+            event = JSONObject.parseObject(message, ChannelNoticeEvent.class);
           }
           case null, default -> {}
         }

@@ -67,7 +67,7 @@ public abstract class Bot<T extends BotConfig> implements IBotEventHandler {
     if (this.sendAdapter() == null || this.receiveAdapter() == null){
       return;
     }
-    if (this.receiveAdapter() == this.sendAdapter()){
+    if (config.getSendConnectType().equals(config.getReceiveConnectType())){
       this.receiveAdapter().connect();
     }else {
       this.receiveAdapter().connect();
@@ -79,7 +79,7 @@ public abstract class Bot<T extends BotConfig> implements IBotEventHandler {
     if (this.sendAdapter() == null || this.receiveAdapter() == null){
       return;
     }
-    if (this.receiveAdapter() == this.sendAdapter()){
+    if (config.getSendConnectType().equals(config.getReceiveConnectType())){
       this.receiveAdapter().reconnect();
     }else {
       this.receiveAdapter().reconnect();

@@ -1,14 +1,25 @@
 package woaini.fenger.bot.core.event.base;
 
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSONReader;
+import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.annotation.JSONField;
 import java.io.Serializable;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.alibaba.fastjson2.reader.ObjectReader;
+import com.alibaba.fastjson2.writer.ObjectWriter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import woaini.fenger.bot.core.event.enums.EventType;
 import woaini.fenger.bot.core.event.segment.Messages;
+import woaini.fenger.bot.core.event.segment.Segment;
+import woaini.fenger.bot.core.event.segment.impl.Text;
 
 /**
  * 事件

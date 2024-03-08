@@ -39,6 +39,7 @@ public abstract class ReverseWsAdapter extends Adapter {
           @Override
           public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
             botWebSocket = webSocket;
+              log.info("收到链接请求,{}-{}", bot.getSelfId(), bot.getPlatForm());
           }
 
           @Override
@@ -48,10 +49,10 @@ public abstract class ReverseWsAdapter extends Adapter {
 
           @Override
           public void onMessage(WebSocket webSocket, String s) {
-            log.info("收到消息,{}-{}：{}", bot.getSelfId(), bot.getPlatForm(), s);
             Event event = decode(s);
             // 元事件不进行放入队列
             if (event != null && !event.getType().equals(EventType.meta)) {
+              log.info("收到消息,{}-{}：{}", bot.getSelfId(), bot.getPlatForm(), s);
               bot.addEvent(bot,decode(s));
             }
           }

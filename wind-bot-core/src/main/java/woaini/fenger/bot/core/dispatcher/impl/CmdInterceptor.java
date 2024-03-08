@@ -60,13 +60,15 @@ public class CmdInterceptor implements IBotInterceptor, ApplicationStartupComple
 
   @Override
   public boolean dispatch(Session session) {
+    String cmdPrefix = botAutoConfig.getCmdPrefix();
+
     String actualText = session.getActualText();
     if (StrUtil.isNotEmpty(actualText)) {
       //判断是否是命令 以指令开始符号的都是
-      if (!actualText.startsWith("#")){
+      if (!actualText.startsWith(cmdPrefix)){
         return true;
       }
-      actualText = actualText.replace("#","");
+      actualText = actualText.replace(cmdPrefix,"");
       handlerCmd(actualText, session);
       //被指令拦截的不会进行其他的处理
       return false;

@@ -105,11 +105,6 @@ public class BotManager
         if (event == null) {
           continue;
         }
-        log.info(
-            "事件发放,{}-{}:{}",
-            session.getBot().agreement(),
-            session.getBot().getSelfId(),
-            JSONObject.toJSONString(event));
         // 进行任务分发操作 超时10秒
         ThreadTool.submitTask(
             () -> {
