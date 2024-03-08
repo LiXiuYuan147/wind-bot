@@ -1,7 +1,6 @@
 package woaini.fenger.bot.core.adapter;
 
-import cn.hutool.core.convert.Convert;
-import com.alibaba.fastjson2.JSONObject;
+import java.net.InetSocketAddress;
 import lombok.extern.slf4j.Slf4j;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -12,9 +11,6 @@ import woaini.fenger.bot.core.event.action.ActionRequest;
 import woaini.fenger.bot.core.event.action.ActionResponse;
 import woaini.fenger.bot.core.event.base.Event;
 import woaini.fenger.bot.core.event.enums.EventType;
-
-import java.net.InetSocketAddress;
-import java.util.Map;
 
 /**
  * 反向websocket
@@ -37,9 +33,9 @@ public abstract class ReverseWsAdapter extends Adapter {
   public void init() {
 
     BotConfig config = this.bot.getConfig();
-    Object reverseWsPort = config.getExtra("reverseWsPort");
+    Integer reverseWsPort = config.getReverseWsPort();
     webSocketServer =
-        new WebSocketServer(new InetSocketAddress(Convert.toInt(reverseWsPort))) {
+        new WebSocketServer(new InetSocketAddress(reverseWsPort)) {
           @Override
           public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
             botWebSocket = webSocket;

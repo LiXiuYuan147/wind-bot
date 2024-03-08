@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-@Import(value = {WindBotAutoConfig.class,WindBotImportBeanDefinitionRegistrar.class})
+@Import(value = {WindBotAutoConfig.class,WindBotImportBeanDefinitionRegistrar.class,cn.hutool.extra.spring.SpringUtil.class})
 public @interface EnableWindBot {
     String[] scanPackages() default {};
 }

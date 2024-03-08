@@ -29,22 +29,4 @@ public class ActionTool {
     consumer.accept(actionRequest.getParams());
     return actionRequest;
   }
-
-  /**
-   * @MethodName sendPrivateAction
-   * @param userId 用户ID
-   * @param messages 消息
-   * @author yefeng
-   * {@date 2024-03-06 12:01:36}
-   * @since 1.0
-   * @return {@link ActionRequest }
-   * 发送私人操作
-   */
-  public ActionRequest sendPrivateAction(String userId,Messages messages){
-      return of("send_message",params ->{
-        params.put("detail_type","group");
-        params.put("user_id",userId);
-        params.put("message",messages);
-      });
-  }
 }

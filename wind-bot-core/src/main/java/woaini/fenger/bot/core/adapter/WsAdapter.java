@@ -1,21 +1,16 @@
 package woaini.fenger.bot.core.adapter;
 
-import cn.hutool.core.map.MapUtil;
-import cn.hutool.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
 import woaini.fenger.bot.core.bot.Bot;
 import woaini.fenger.bot.core.bot.config.BotConfig;
-import woaini.fenger.bot.core.bot.config.WsBotConfig;
 import woaini.fenger.bot.core.event.action.ActionRequest;
 import woaini.fenger.bot.core.event.action.ActionResponse;
 import woaini.fenger.bot.core.event.base.Event;
-
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
+
 
 /**
  * WS适配器 正向链接适配器
@@ -39,15 +34,7 @@ public abstract class WsAdapter extends Adapter {
     public void init(){
 
         //获取ws链接
-        WsBotConfig wsBotConfig = (WsBotConfig) botConfig;
-        String wsHost = wsBotConfig.getWsHost();
-
-        Map<String, Object> params = botConfig.getParams();
-        Map<String, String> headers = botConfig.getHeaders();
-        if (MapUtil.isNotEmpty(params)) {
-            wsHost = HttpUtil.urlWithForm(wsHost, params, StandardCharsets.UTF_8, false);
-        }
-
+        String wsHost = botConfig.getWsHost();
         URI uri = null;
         try {
             uri = new URI(wsHost);
@@ -58,7 +45,7 @@ public abstract class WsAdapter extends Adapter {
             return;
         }
         webSocketClient =
-                new WebSocketClient(uri, new Draft_6455(), headers) {
+                new WebSocketClient(uri, new Draft_6455(), null) {
                     @Override
                     public void onOpen(ServerHandshake serverHandshake) {
                         bot.online();

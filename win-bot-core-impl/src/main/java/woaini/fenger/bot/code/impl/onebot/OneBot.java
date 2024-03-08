@@ -15,15 +15,12 @@ import woaini.fenger.bot.core.internal.Internal;
  */
 public class OneBot extends Bot<OneBotConfig> {
 
+    public static final String NAME = "OneBot12";
+
     private Adapter sendAdapter;
 
     private Adapter receiveAdapter;
 
-
-    @Override
-    public String agreement() {
-        return "OneBot12";
-    }
 
     public OneBot(OneBotConfig config) {
         super(config);
@@ -31,9 +28,19 @@ public class OneBot extends Bot<OneBotConfig> {
     }
 
     @Override
+    public String agreement() {
+        return OneBot.NAME;
+    }
+
+    @Override
     public void close() {
-        sendAdapter.close();
-        receiveAdapter.close();
+        OneBotConfig config = this.getConfig();
+        if (config.getSendConnectType().equals(config.getReceiveConnectType())){
+            this.sendAdapter.close();
+        }else {
+            this.sendAdapter.close();
+            this.receiveAdapter.close();
+        }
     }
 
     public void init(){
@@ -69,6 +76,6 @@ public class OneBot extends Bot<OneBotConfig> {
 
     @Override
     public Internal internal() {
-        return null;
+        return new Internal(this);
     }
 }

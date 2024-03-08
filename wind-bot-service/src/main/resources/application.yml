@@ -1,3 +1,17 @@
 server:
   port: 52000
 
+wind-bot:
+  ont-bot:
+    bots:
+      - autoStart: true
+        self-id: 609216758
+        plat-form: qq
+        agreement: OneBot12
+        receive-connect-type: REVERSE_WS
+        send-connect-type: REVERSE_WS
+        reverse-ws-port: 12000
+  cmd-prefix:
+    - '#'
+    - '/'
+

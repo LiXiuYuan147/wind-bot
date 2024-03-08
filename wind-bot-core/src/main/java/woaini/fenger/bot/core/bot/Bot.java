@@ -1,7 +1,5 @@
 package woaini.fenger.bot.core.bot;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import woaini.fenger.bot.core.adapter.Adapter;
@@ -9,7 +7,6 @@ import woaini.fenger.bot.core.bot.config.BotConfig;
 import woaini.fenger.bot.core.bot.enums.BotStatus;
 import woaini.fenger.bot.core.event.action.ActionRequest;
 import woaini.fenger.bot.core.event.action.ActionResponse;
-import woaini.fenger.bot.core.event.base.Event;
 import woaini.fenger.bot.core.internal.Internal;
 
 /**
@@ -66,7 +63,7 @@ public abstract class Bot<T extends BotConfig> implements IBotEventHandler {
     this.status = BotStatus.OFFLINE;
   }
 
-  public void startWorker() {
+  public void startConnect() {
     if (this.sendAdapter() == null || this.receiveAdapter() == null){
       return;
     }
@@ -75,6 +72,18 @@ public abstract class Bot<T extends BotConfig> implements IBotEventHandler {
     }else {
       this.receiveAdapter().connect();
       this.sendAdapter().connect();
+    }
+  }
+
+  public void reConnect() {
+    if (this.sendAdapter() == null || this.receiveAdapter() == null){
+      return;
+    }
+    if (this.receiveAdapter() == this.sendAdapter()){
+      this.receiveAdapter().reconnect();
+    }else {
+      this.receiveAdapter().reconnect();
+      this.sendAdapter().reconnect();
     }
   }
 
@@ -110,7 +119,7 @@ public abstract class Bot<T extends BotConfig> implements IBotEventHandler {
    *
    * @author yefeng {@date 2024-03-06 16:18:29}
    * @since 1.0
-   * @return {@link Internal } 内部
+   * @return {@link Internal } 内部方法
    */
   public abstract Internal internal();
 

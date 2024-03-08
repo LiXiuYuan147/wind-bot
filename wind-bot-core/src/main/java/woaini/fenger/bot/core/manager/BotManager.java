@@ -5,7 +5,6 @@ import com.alibaba.fastjson2.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import lombok.experimental.FieldNameConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
@@ -13,6 +12,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.stereotype.Component;
 import woaini.fenger.bot.core.boot.ApplicationStartupCompleted;
+import woaini.fenger.bot.core.boot.IBotAutoRegister;
 import woaini.fenger.bot.core.bot.Bot;
 import woaini.fenger.bot.core.bot.BotKey;
 import woaini.fenger.bot.core.event.base.Event;
@@ -25,9 +25,7 @@ import woaini.fenger.bot.core.utils.ThreadTool;
  * @see woaini.fenger.bot.core.manager.BotManager
  * @author yefeng {@code @Date} 2023-05-16 16:50:39
  */
-@Component
 @Slf4j
-@Import(cn.hutool.extra.spring.SpringUtil.class)
 @FieldNameConstants
 public class BotManager
     implements ApplicationListener<ContextClosedEvent>, ApplicationStartupCompleted {
@@ -35,11 +33,6 @@ public class BotManager
    * @see Map<BotKey, Bot> 存储所有的bot
    */
   private static final Map<BotKey, Bot> BOT_INSTANCE_MAP = new HashMap<>();
-
-  /**
-   * @see Map<String, Class<? extends Bot>> 存储所有的bot对应的bot类
-   */
-  private static final Map<String, Class<? extends Bot>> BOT_MAP = new HashMap<>();
 
   public List<String> packages;
 
@@ -55,10 +48,16 @@ public class BotManager
    * @since 1.0
    *     <p>注册机器人 注册后 如果是自动登录的，会进行自动登录程序
    */
-  public void registerBot(Bot bot) {
-    bot.startWorker();
-    // 获取对应的平台和协议对应的机器人
+  private void registerBot(Bot bot) {
+    if (BOT_INSTANCE_MAP.containsKey(bot.botKey())) {
+      return;
+    }
     BOT_INSTANCE_MAP.put(bot.botKey(), bot);
+    log.info("注册机器人: {}", bot.botKey());
+    Boolean autoStart = bot.getConfig().getAutoStart();
+    if (autoStart) {
+      bot.startConnect();
+    }
   }
 
   @Override
@@ -70,11 +69,15 @@ public class BotManager
 
   @Override
   public void onInit() {
-    //启动消费线程
+    // 扫码包下面的 IBotAutoRegister
+    Map<String, IBotAutoRegister> beans = SpringUtil.getBeansOfType(IBotAutoRegister.class);
+    beans.forEach(
+        (k, bean) -> {
+          bean.autoRegister().forEach(this::registerBot);
+        });
+    // 启动消费线程
     BotManagerRunner botManagerRunner = new BotManagerRunner();
     ThreadTool.run(botManagerRunner);
-    //注入机器人对应的类
-//    SpringUtil.getBeansOfType();
   }
 
   /**
@@ -93,7 +96,11 @@ public class BotManager
         if (event == null) {
           continue;
         }
-        log.info("事件发放,{}-{}:{}",event.getSelf().getPlatform(),event.getSelf().getUserId(),JSONObject.toJSONString(event));
+        log.info(
+            "事件发放,{}-{}:{}",
+            event.getSelf().getPlatform(),
+            event.getSelf().getUserId(),
+            JSONObject.toJSONString(event));
         // 进行任务分发操作 超时10秒
         ThreadTool.submitTask(() -> {}, 10);
       }
