@@ -1,5 +1,6 @@
 package woaini.fenger.bot.core.event.segment;
 
+import cn.hutool.core.util.StrUtil;
 import woaini.fenger.bot.core.event.segment.impl.Mention;
 import woaini.fenger.bot.core.event.segment.impl.MentionAll;
 import woaini.fenger.bot.core.event.segment.impl.Text;
@@ -43,6 +44,11 @@ public class Messages {
 
   public Messages text(String text) {
     return this.add(new Text(text));
+  }
+
+  public Messages text(String text,Object ...args) {
+    String formatted = StrUtil.format(text, args);
+    return this.add(new Text(formatted));
   }
 
 }

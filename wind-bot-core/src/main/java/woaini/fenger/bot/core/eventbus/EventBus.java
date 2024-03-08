@@ -4,7 +4,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import woaini.fenger.bot.core.bot.Bot;
 import woaini.fenger.bot.core.event.base.Event;
+import woaini.fenger.bot.core.session.Session;
 
 /**
  * 事件母线
@@ -19,7 +21,7 @@ public class EventBus {
   /**
    * @see BlockingQueue < Event > 事件队列 所有Bot接受到的事件都放到这个队列里 然后由消费线程进行消费
    */
-  private static final BlockingQueue<Event> EVENT_QUEUE = new LinkedBlockingQueue<>(1024);
+  private static final BlockingQueue<Session> EVENT_QUEUE = new LinkedBlockingQueue<>(1024);
 
   /**
    * @MethodName addEvent
@@ -29,8 +31,11 @@ public class EventBus {
    * @since 1.0
    *     <p>添加事件
    */
-  public static void addEvent(Event event) {
-    EVENT_QUEUE.add(event);
+  public static void addEvent(Bot bot, Event event) {
+    Session session = new Session();
+    session.setBot(bot);
+    session.setEvent(event);
+    EVENT_QUEUE.add(session);
   }
 
   /**
@@ -40,7 +45,7 @@ public class EventBus {
    * @since 1.0
    * @return {@link Event } 获取事件 阻塞的方式
    */
-  public static Event getEvent() {
+  public static Session getEvent() {
     try {
       return EVENT_QUEUE.take();
     } catch (Exception ex) {

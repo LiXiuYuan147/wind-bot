@@ -15,8 +15,10 @@ import woaini.fenger.bot.core.boot.ApplicationStartupCompleted;
 import woaini.fenger.bot.core.boot.IBotAutoRegister;
 import woaini.fenger.bot.core.bot.Bot;
 import woaini.fenger.bot.core.bot.BotKey;
+import woaini.fenger.bot.core.dispatcher.BotDispatcher;
 import woaini.fenger.bot.core.event.base.Event;
 import woaini.fenger.bot.core.eventbus.EventBus;
+import woaini.fenger.bot.core.session.Session;
 import woaini.fenger.bot.core.utils.ThreadTool;
 
 /**
@@ -88,21 +90,32 @@ public class BotManager
    */
   public static class BotManagerRunner implements Runnable {
 
+    private BotDispatcher botDispatcher;
+
+    public BotManagerRunner() {
+      this.botDispatcher = SpringUtil.getBean(BotDispatcher.class);
+    }
+
     @Override
     public void run() {
       log.info("BotManagerRunner is running...");
       while (true) {
-        Event event = EventBus.getEvent();
+        Session session = EventBus.getEvent();
+        Event event = session.getEvent();
         if (event == null) {
           continue;
         }
         log.info(
             "事件发放,{}-{}:{}",
-            event.getSelf().getPlatform(),
-            event.getSelf().getUserId(),
+            session.getBot().agreement(),
+            session.getBot().getSelfId(),
             JSONObject.toJSONString(event));
         // 进行任务分发操作 超时10秒
-        ThreadTool.submitTask(() -> {}, 10);
+        ThreadTool.submitTask(
+            () -> {
+              botDispatcher.dispatch(session);
+            },
+            10);
       }
     }
   }

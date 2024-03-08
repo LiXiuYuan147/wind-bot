@@ -13,7 +13,7 @@ import lombok.Data;
 public class Self {
 
   /**
-   * @see String 站台
+   * @see String 平台
    */
   private String platform;
 

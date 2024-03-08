@@ -52,7 +52,7 @@ public abstract class ReverseWsAdapter extends Adapter {
             Event event = decode(s);
             // 元事件不进行放入队列
             if (event != null && !event.getType().equals(EventType.meta)) {
-              bot.addEvent(decode(s));
+              bot.addEvent(bot,decode(s));
             }
           }
 

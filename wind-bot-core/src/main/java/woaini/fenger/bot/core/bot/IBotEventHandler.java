@@ -13,8 +13,8 @@ import woaini.fenger.bot.core.eventbus.EventBus;
  */
 public interface IBotEventHandler {
 
-  default void addEvent(Event event){
-    EventBus.addEvent(event);
+  default void addEvent(Bot bot,Event event){
+    EventBus.addEvent(bot,event);
   }
 
   /**

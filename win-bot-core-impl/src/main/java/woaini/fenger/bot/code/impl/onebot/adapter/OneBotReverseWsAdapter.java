@@ -37,9 +37,9 @@ public class OneBotReverseWsAdapter extends ReverseWsAdapter {
     // 获取事件类型
     JSONObject source = JSONObject.parseObject(message);
     EventType type = EventType.valueOf(source.getString("type"));
+    String detailType = source.getString("detail_type");
     switch (type) {
       case meta -> {
-        String detailType = source.getString("detail_type");
         switch (detailType) {
           case "connect" -> {
             event = source.toJavaObject(ConnectMateEvent.class);
@@ -61,6 +61,6 @@ public class OneBotReverseWsAdapter extends ReverseWsAdapter {
 
   @Override
   public String encode(ActionRequest action) {
-    return null;
+    return JSONObject.toJSONString(action);
   }
 }
