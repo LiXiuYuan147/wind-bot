@@ -13,4 +13,7 @@ public abstract class MessageEvent extends Event {
   public MessageEvent() {
     this.setType(EventType.message);
   }
+
+  abstract public String getSendUserId();
+
 }

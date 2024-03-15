@@ -2,7 +2,9 @@ package woaini.fenger.bot.core.event.segment.impl;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import woaini.fenger.bot.core.event.segment.Segment;
 
 import java.io.Serializable;
@@ -13,6 +15,8 @@ import java.io.Serializable;
  * @see woaini.fenger.bot.core.event.segment.impl.Mention
  * @author yefeng {@code @Date} 2023-05-16 16:50:39
  */
+@Getter
+@Setter
 public class Mention extends Segment implements Serializable {
 
   private Data data;

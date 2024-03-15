@@ -22,4 +22,9 @@ public class PrivateMessageEvent extends MessageEvent {
     public PrivateMessageEvent() {
         this.setDetailType("private");
     }
+
+    @Override
+    public String getSendUserId() {
+        return userId;
+    }
 }

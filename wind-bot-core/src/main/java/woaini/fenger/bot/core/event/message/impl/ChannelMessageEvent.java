@@ -17,6 +17,11 @@ public class ChannelMessageEvent extends MessageEvent {
     this.setDetailType("channel");
   }
 
+  @Override
+  public String getSendUserId() {
+    return userId;
+  }
+
   /**
    * @see String 用户id
    */

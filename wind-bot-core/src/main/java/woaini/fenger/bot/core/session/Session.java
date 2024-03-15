@@ -1,6 +1,9 @@
 package woaini.fenger.bot.core.session;
 
+import cn.hutool.extra.spring.SpringUtil;
 import lombok.Data;
+import woaini.fenger.bot.core.bind.domain.BotBind;
+import woaini.fenger.bot.core.bind.service.BotUserConfigService;
 import woaini.fenger.bot.core.bot.Bot;
 import woaini.fenger.bot.core.event.base.Event;
 import woaini.fenger.bot.core.event.message.impl.GroupMessageEvent;
@@ -25,6 +28,8 @@ public class Session {
      * @see Event 事件
      */
     private Event event;
+
+    private BotBind bind;
 
     /**
      * @MethodName replyMessage
@@ -62,5 +67,15 @@ public class Session {
 
     public String getActualText(){
         return this.event.getAltMessage();
+    }
+
+    public <R> R getCurrentUserConfig(String configKey, Class<R> rClass) {
+        BotUserConfigService bean = SpringUtil.getBean(BotUserConfigService.class);
+        return bean.getBotUserConfig(this.bind.getBotUser().getId().toString(), configKey, rClass);
+    }
+
+    public <R> R getUserConfig(String id,String configKey, Class<R> rClass) {
+        BotUserConfigService bean = SpringUtil.getBean(BotUserConfigService.class);
+        return bean.getBotUserConfig(id, configKey, rClass);
     }
 }

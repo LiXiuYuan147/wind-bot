@@ -17,6 +17,11 @@ public class GroupMessageEvent extends MessageEvent {
         this.setDetailType("group");
     }
 
+    @Override
+    public String getSendUserId() {
+        return userId;
+    }
+
     /**
      * @see String 用户id
      */

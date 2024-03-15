@@ -23,14 +23,6 @@ import java.util.List;
  */
 public class Messages {
 
-  public List<Segment> getElements() {
-    return elements;
-  }
-
-  public void setElements(List<Segment> elements) {
-    this.elements = elements;
-  }
-
   /**
    * @see List <Segment> 元素
    */
@@ -44,9 +36,20 @@ public class Messages {
     return new Messages();
   }
 
+  public List<Segment> getElements() {
+    return elements;
+  }
+
+  public void setElements(List<Segment> elements) {
+    this.elements = elements;
+  }
+
   public Messages add(Segment segment) {
     this.elements.add(segment);
     return this;
+  }
+  public boolean isAt(String id) {
+    return this.elements.stream().anyMatch(segment -> segment instanceof Mention && ((Mention) segment).getData().getUserId().equals(id));
   }
 
   public Messages at(String id) {
