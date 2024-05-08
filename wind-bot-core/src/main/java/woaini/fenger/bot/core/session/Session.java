@@ -46,7 +46,7 @@ public class Session {
                 bot.internal().sendPrivateMessage(privateMessageEvent.getUserId(), messages);
             }
             case GroupMessageEvent groupMessageEvent->{
-                bot.internal().sendPrivateMessage(groupMessageEvent.getGroupId(), messages);
+                bot.internal().sendGroupMessage(groupMessageEvent.getGroupId(), messages);
             }
             case null, default -> {}
         }
