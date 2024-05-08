@@ -2,6 +2,8 @@ package woaini.fenger.bot.code.impl.onebot.auto;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.hutool.core.collection.CollUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -35,6 +37,9 @@ public class OneBotAutoRegister implements IBotAutoRegister {
     List<Bot> botList = new ArrayList<>();
     // 遍历配置 进行读取所有的
     List<OneBotConfig> configs = oneBotAutoConfig.getBots();
+    if (CollUtil.isEmpty(configs)){
+      return botList;
+    }
     for (OneBotConfig config : configs) {
       OneBot oneBot = new OneBot(config);
       botList.add(oneBot);

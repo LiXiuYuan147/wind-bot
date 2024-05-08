@@ -2,15 +2,15 @@ server:
   port: 52000
 
 wind-bot:
-  ont-bot:
+  ont-bot-11:
     bots:
       - autoStart: true
-        self-id: 609216758
+        self-id: 355242685
         plat-form: qq
-        agreement: OneBot12
-        receive-connect-type: REVERSE_WS
-        send-connect-type: REVERSE_WS
-        reverse-ws-port: 12000
+        agreement: OneBot11
+        receive-connect-type: WS
+        send-connect-type: WS
+        ws-host: ws://127.0.0.1:3001
   cmd-prefix: "#"
 
 DB_HOST: 101.33.232.217

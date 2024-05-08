@@ -12,6 +12,7 @@ import java.util.List;
 public class OneBotConfig extends BotConfig {
 
     public OneBotConfig() {
+        super();
         this.setAgreement(OneBot.NAME);
     }
 }

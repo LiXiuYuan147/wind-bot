@@ -54,7 +54,7 @@ public abstract class WsAdapter extends Adapter {
 
                     @Override
                     public void onMessage(String s) {
-                        log.debug("socket原始数据:{},{},{}",s, botConfig.getSelfId(), botConfig.getPlatForm());
+                        log.info("socket原始数据:{},{},{}",s, botConfig.getSelfId(), botConfig.getPlatForm());
                         Event decode = decode(s);
                         if (decode != null){
                             bot.addEvent(bot,decode);
