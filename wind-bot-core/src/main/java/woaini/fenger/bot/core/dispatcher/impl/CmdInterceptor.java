@@ -13,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import woaini.fenger.bot.core.bind.domain.BotBind;
+import woaini.fenger.bot.core.bind.service.BotUserService;
 import woaini.fenger.bot.core.boot.ApplicationStartupCompleted;
 import woaini.fenger.bot.core.bot.config.BotAutoConfig;
 import woaini.fenger.bot.core.command.ICmd;
@@ -22,7 +24,10 @@ import woaini.fenger.bot.core.command.dto.CmdDTO;
 import woaini.fenger.bot.core.command.utils.CmdTool;
 import woaini.fenger.bot.core.dispatcher.IBotInterceptor;
 import woaini.fenger.bot.core.event.message.MessageEvent;
+import woaini.fenger.bot.core.event.message.impl.GroupMessageEvent;
 import woaini.fenger.bot.core.event.segment.Messages;
+import woaini.fenger.bot.core.event.segment.Segment;
+import woaini.fenger.bot.core.event.segment.impl.Mention;
 import woaini.fenger.bot.core.exception.BotException;
 import woaini.fenger.bot.core.session.Session;
 
@@ -38,11 +43,13 @@ import woaini.fenger.bot.core.session.Session;
 public class CmdInterceptor implements IBotInterceptor, ApplicationStartupCompleted {
 
   private final BotAutoConfig botAutoConfig;
+  private final BotUserService botUserService;
 
   /**
    * @see Integer 执行顺序
    */
   public static final Integer ORDER = 100;
+
   public static Map<String, ICmd> cmdMaps;
 
   @Override
@@ -64,13 +71,13 @@ public class CmdInterceptor implements IBotInterceptor, ApplicationStartupComple
 
     String actualText = session.getActualText();
     if (StrUtil.isNotEmpty(actualText)) {
-      //判断是否是命令 以指令开始符号的都是
-      if (!actualText.startsWith(cmdPrefix)){
+      // 判断是否是命令 以指令开始符号的都是
+      if (!actualText.startsWith(cmdPrefix)) {
         return true;
       }
-      actualText = actualText.replace(cmdPrefix,"");
+      actualText = actualText.replace(cmdPrefix, "");
       handlerCmd(actualText, session);
-      //被指令拦截的不会进行其他的处理
+      // 被指令拦截的不会进行其他的处理
       return false;
     }
     return IBotInterceptor.super.dispatch(session);
@@ -95,45 +102,66 @@ public class CmdInterceptor implements IBotInterceptor, ApplicationStartupComple
     Messages messages = new Messages();
 
     CmdDTO cmdDTO = CmdTool.decoder(cmdStr);
-    //获取主命令
+    // 填入参数 @的
+    if (session.getEvent() instanceof GroupMessageEvent groupMessageEvent) {
+      List<Segment> atList =
+          groupMessageEvent.getMessage().getElements().stream()
+              .filter(d -> d.getType().equals("mention"))
+              .toList();
+      int index = 1;
+      for (Segment segment : atList) {
+        Map<String, String> params = cmdDTO.getParams();
+        String platForm = session.getBot().getPlatForm();
+        Mention mention = (Mention) segment;
+        BotBind botBind = botUserService.getByPlatformAndPlatformId(platForm, mention.getData().getUserId());
+        params.put("@" + index++, String.valueOf(botBind.getId()));
+      }
+    }
+    // 获取主命令
     String mainCmd = cmdDTO.getMainCmd();
-    //获取是否有匹配
+    // 获取是否有匹配
     ICmd cmd = cmdMaps.get(mainCmd);
     if (cmd == null) {
-     messages.text("指令:{},不存在，请检查输入",mainCmd);
-     session.replyMessage(messages);
-     return;
+      messages.text("指令:{},不存在，请检查输入", mainCmd);
+      session.replyMessage(messages);
+      return;
     }
-    //判断是否是帮助
-    if (cmdDTO.help()){
-      //获取帮助信息
+    // 判断是否是帮助
+    if (cmdDTO.help()) {
+      // 获取帮助信息
       messages.text(CmdTool.buildHelp(cmd));
       session.replyMessage(messages);
       return;
     }
-    //获取所有包含子命令的方法
-    Method[] methods = ReflectUtil.getMethods(cmd.getClass(), x -> x.getAnnotation(SubCmd.class) != null);
-    //获取所有存在的子命令列表 进行匹配
-    Map<String, Method> methodMap = Arrays.stream(methods).collect(Collectors.toMap(d -> {
-      SubCmd subCmd = d.getAnnotation(SubCmd.class);
-      return subCmd.value();
-    }, x -> x));
+    // 获取所有包含子命令的方法
+    Method[] methods =
+        ReflectUtil.getMethods(cmd.getClass(), x -> x.getAnnotation(SubCmd.class) != null);
+    // 获取所有存在的子命令列表 进行匹配
+    Map<String, Method> methodMap =
+        Arrays.stream(methods)
+            .collect(
+                Collectors.toMap(
+                    d -> {
+                      SubCmd subCmd = d.getAnnotation(SubCmd.class);
+                      return subCmd.value();
+                    },
+                    x -> x));
 
-    //获取子命令匹配 判断是否有key相等
+    // 获取子命令匹配 判断是否有key相等
     String subCmd = cmdDTO.getSubCmd();
     Method method = methodMap.get(subCmd);
-    //1 存在子命令匹配 进行参数以及方法调用
-    if (method != null){
-      invokeMethod(cmd,method,cmdDTO,session);
-    }else {
-      //不存在子命令匹配的 调用默认方法
+    // 1 存在子命令匹配 进行参数以及方法调用
+    if (method != null) {
+      invokeMethod(cmd, method, cmdDTO, session);
+    } else {
+      // 不存在子命令匹配的 调用默认方法
       Method defaultMethod = methodMap.get(SubCmd.DEFAULT_VALUE);
-      invokeMethod(cmd,defaultMethod,cmdDTO,session);
+      invokeMethod(cmd, defaultMethod, cmdDTO, session);
     }
   }
 
-  private void invokeMethod(ICmd cmd,Method method,CmdDTO cmdDTO,Session session){
-      //获取方法对应的参数
+  private void invokeMethod(ICmd cmd, Method method, CmdDTO cmdDTO, Session session) {
+    // 获取方法对应的参数
     Parameter[] parameters = method.getParameters();
     List<Object> params = new ArrayList<>();
 
@@ -143,53 +171,53 @@ public class CmdInterceptor implements IBotInterceptor, ApplicationStartupComple
     for (int i = 0; i < parameters.length; i++) {
       Parameter parameter = parameters[i];
       Class<?> type = parameter.getType();
-      //session注入
-      if (Session.class.isAssignableFrom(type)){
+      // session注入
+      if (Session.class.isAssignableFrom(type)) {
         params.add(session);
         continue;
       }
       CmdParams annotation = parameter.getAnnotation(CmdParams.class);
-      if (annotation == null){
+      if (annotation == null) {
         continue;
       }
-      //开始组装参数 如果是从数组获取参数
-      String key = annotation.value().replaceAll("-","");
+      // 开始组装参数 如果是从数组获取参数
+      String key = annotation.value().replaceAll("-", "");
 
-      //bool注入
-      if (Boolean.class.isAssignableFrom(type)){
+      // bool注入
+      if (Boolean.class.isAssignableFrom(type)) {
         params.add(paramMap.containsKey(key));
         continue;
       }
       boolean required = annotation.required();
 
-      if (key.startsWith("[")){
-        key = key.replace("[","").replace("]","");
+      if (key.startsWith("[")) {
+        key = key.replace("[", "").replace("]", "");
         int index = Integer.parseInt(key);
-        if (required && subParams.size() <= index){
-          session.replyMessage(new Messages().text("参数:{}为必填",key));
+        if (required && subParams.size() <= index) {
+          session.replyMessage(new Messages().text("参数:{}为必填", key));
           continue;
         }
-        params.add(Convert.convert(type,subParams.get(index)));
-      }else {
-        //对应命令的参数值
+        params.add(Convert.convert(type, subParams.get(index)));
+      } else {
+        // 对应命令的参数值
         String value = paramMap.get(key);
-        if (StrUtil.isEmpty(value)){
-          if (required && StrUtil.isEmpty(annotation.defaultValue())){
-            session.replyMessage(new Messages().text("参数:{}为必填",key));
+        if (StrUtil.isEmpty(value)) {
+          if (required && StrUtil.isEmpty(annotation.defaultValue())) {
+            session.replyMessage(new Messages().text("参数:{}为必填", key));
             continue;
           }
-          //默认值
-          params.add(Convert.convert(type,annotation.defaultValue()));
-        }else {
-          //参数值
-          params.add(Convert.convert(type,value));
+          // 默认值
+          params.add(Convert.convert(type, annotation.defaultValue()));
+        } else {
+          // 参数值
+          params.add(Convert.convert(type, value));
         }
       }
     }
-    //进行调用
-    try{
-      method.invoke(cmd,params.toArray());
-    }catch (Exception e){
+    // 进行调用
+    try {
+      method.invoke(cmd, params.toArray());
+    } catch (Exception e) {
       String errorMessage = "方法调用失败";
       Throwable cause = e.getCause();
       while (cause != null) {
@@ -199,8 +227,8 @@ public class CmdInterceptor implements IBotInterceptor, ApplicationStartupComple
           break;
         }
       }
-      session.replyMessage(new Messages().text("命令执行错误:\r\n{}",errorMessage));
-      log.error("方法调用失败:{}",method.getName(),cause);
+      session.replyMessage(new Messages().text("命令执行错误:\r\n{}", errorMessage));
+      log.error("方法调用失败:{}", method.getName(), cause);
     }
   }
 }

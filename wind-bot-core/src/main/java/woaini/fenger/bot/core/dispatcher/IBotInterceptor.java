@@ -45,4 +45,13 @@ public interface IBotInterceptor {
   default int order() {
     return 100;
   }
+
+  /** 是否异步 异步的会单独线程执行
+   * @author yefeng {@date 2024-09-18 16:56:55}
+   * @since 1.0
+   * @return boolean
+   */
+  default boolean async() {
+    return false;
+  }
 }

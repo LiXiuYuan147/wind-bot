@@ -13,6 +13,10 @@ import woaini.fenger.bot.core.event.enums.EventType;
 @Data
 public abstract class NoticeEvent extends Event {
 
+    private String noticeType;
+
+    abstract public String getUserId();
+    
     public NoticeEvent() {
         this.setType(EventType.notice);
     }

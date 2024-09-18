@@ -41,6 +41,21 @@
             <artifactId>spring-boot-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>opencv</groupId>
+            <artifactId>opencv</artifactId>
+            <version>490</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/opencv-490.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.plexpt</groupId>
+            <artifactId>chatgpt</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

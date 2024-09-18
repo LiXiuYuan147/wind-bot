@@ -4,10 +4,12 @@ import cn.hutool.extra.spring.SpringUtil;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import woaini.fenger.bot.core.boot.ApplicationStartupCompleted;
-import woaini.fenger.bot.core.bot.Bot;
 import woaini.fenger.bot.core.event.base.Event;
 import woaini.fenger.bot.core.session.Session;
 
@@ -18,9 +20,12 @@ import woaini.fenger.bot.core.session.Session;
  * @author yefeng {@code @Date} 2023-05-16 16:50:39
  */
 @Component
+@RequiredArgsConstructor
 public class BotDispatcher implements ApplicationStartupCompleted {
 
   private Collection<IBotInterceptor> beans;
+
+  private final ExecutorService executorService ;
 
   public void dispatch(Session session) {
     Event event = session.getEvent();
@@ -30,6 +35,12 @@ public class BotDispatcher implements ApplicationStartupCompleted {
     for (IBotInterceptor bean : beans) {
       boolean predDispatch = bean.preDispatch(session);
       if (!predDispatch){
+        continue;
+      }
+      boolean async = bean.async();
+      if (async){
+        //异步任务
+        executorService.execute(() -> bean.dispatch(session));
         continue;
       }
       boolean dispatch = bean.dispatch(session);

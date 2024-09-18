@@ -58,4 +58,9 @@ public class BotUserService {
     botBind.setBotUser(botUser);
     return botBindRepository.save(botBind);
   }
+
+
+  public BotBind getByPlatformAndPlatformId(String platform, String platformId) {
+    return botBindRepository.findByPlatFormAndPlatFormId(platform, platformId).orElse(null);
+  }
 }

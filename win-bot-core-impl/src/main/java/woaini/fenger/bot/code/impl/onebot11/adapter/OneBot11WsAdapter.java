@@ -8,6 +8,9 @@ import woaini.fenger.bot.core.event.message.MessageEvent;
 import woaini.fenger.bot.core.event.message.impl.GroupMessageEvent;
 import woaini.fenger.bot.core.event.message.impl.PrivateMessageEvent;
 import woaini.fenger.bot.core.event.meta.impl.HeartbeatMateEvent;
+import woaini.fenger.bot.core.event.notice.NoticeEvent;
+import woaini.fenger.bot.core.event.notice.impl.GroupNoticeEvent;
+import woaini.fenger.bot.core.event.notice.impl.PrivateNoticeEvent;
 import woaini.fenger.bot.core.event.segment.Messages;
 
 import cn.hutool.core.util.StrUtil;
@@ -66,6 +69,7 @@ public class OneBot11WsAdapter extends WsAdapter {
     switch (postType){
       case "meta_event" -> event = decodeMetaEvent(source,event);
       case "message" -> event = decodeMessageEvent(source,event);
+      case "notice" -> event = decodeNoticeEvent(source,event);
       default -> {}
     }
     return event;
@@ -86,6 +90,21 @@ public class OneBot11WsAdapter extends WsAdapter {
   @Override
   public void close() {
 
+  }
+
+  public NoticeEvent decodeNoticeEvent(JSONObject source, Event baseEvent) {
+
+    NoticeEvent noticeEvent = null;
+    String noticeType = source.getString("notice_type");
+    if (noticeType.startsWith("group")){
+      noticeEvent = source.to(GroupNoticeEvent.class);
+    }else if (noticeType.startsWith("friend")){
+      noticeEvent = source.to(PrivateNoticeEvent.class);
+    }
+    if (noticeType!=null){
+      noticeEvent.setNoticeType(noticeType);
+    }
+    return noticeEvent;
   }
 
   /**

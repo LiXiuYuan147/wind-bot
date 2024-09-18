@@ -10,7 +10,7 @@ wind-bot:
         agreement: OneBot11
         receive-connect-type: WS
         send-connect-type: WS
-        ws-host: ws://192.168.31.100:3001
+        ws-host: ws://10.8.0.70:3001
   cmd-prefix: "#"
 
 DB_HOST: 101.33.232.217
