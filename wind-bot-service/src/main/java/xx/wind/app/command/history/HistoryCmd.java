@@ -1,6 +1,5 @@
 package xx.wind.app.command.history;
 
-import cn.hutool.core.lang.Console;
 import org.springframework.stereotype.Component;
 import woaini.fenger.bot.core.command.ICmd;
 import woaini.fenger.bot.core.command.anno.CmdParams;

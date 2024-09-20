@@ -7,6 +7,7 @@ import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.reader.ObjectReader;
 import com.alibaba.fastjson2.writer.ObjectWriter;
+import woaini.fenger.bot.core.event.segment.impl.Image;
 import woaini.fenger.bot.core.event.segment.impl.Mention;
 import woaini.fenger.bot.core.event.segment.impl.MentionAll;
 import woaini.fenger.bot.core.event.segment.impl.Text;
@@ -62,6 +63,10 @@ public class Messages {
 
   public Messages text(String text) {
     return this.add(new Text(text));
+  }
+
+  public Messages image(String file){
+    return this.add(new Image(file));
   }
 
   public Messages text(String text,Object ...args) {

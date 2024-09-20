@@ -3,7 +3,7 @@
 ##登录测试 docker 仓库
 CI_REGISTRY_TEST=registry.cn-hangzhou.aliyuncs.com
 CI_PROJECT_PATH=xiuyuan-fenger
-BUILD_VERSION=latest
+BUILD_VERSION=24.9.10
 
 docker login -u 15934729199 -p FengYe@233 $CI_REGISTRY_TEST
 
