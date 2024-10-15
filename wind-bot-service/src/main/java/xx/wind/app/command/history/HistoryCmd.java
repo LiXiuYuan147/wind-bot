@@ -19,7 +19,6 @@ import java.util.Queue;
 @Component
 public class HistoryCmd implements ICmd {
 
-
   @Override
   public String masterCmdName() {
     return "查看撤回";
@@ -31,18 +30,19 @@ public class HistoryCmd implements ICmd {
   }
 
   @SubCmd
-  public void execute(Session session,@CmdParams(value = "@1", description = "第一个艾特的用户") Integer userId) {
+  public void execute(
+      Session session, @CmdParams(value = "@1", description = "第一个艾特的用户") Integer userId) {
 
     Integer id = session.getBind().getBotUser().getId();
-    if (id != 2){
+    if (id != 2) {
       session.replyMessage("没有权限使用命令哦");
       return;
     }
     Queue<MessageEvent> messageEvents = HistoryInterceptor.MESSAGE_BACK_CACHE.get(userId);
-    if (messageEvents != null){
+    if (messageEvents != null) {
       MessageEvent messageEvent = messageEvents.poll();
       session.replyMessage("悄悄撤回了:" + messageEvent.getAltMessage());
-    }else {
+    } else {
       session.replyMessage("已经没有撤回的消息啦");
     }
   }

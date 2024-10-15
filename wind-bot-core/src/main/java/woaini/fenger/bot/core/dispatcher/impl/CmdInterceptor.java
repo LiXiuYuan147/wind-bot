@@ -1,5 +1,6 @@
 package woaini.fenger.bot.core.dispatcher.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -126,6 +127,9 @@ public class CmdInterceptor implements IBotInterceptor, ApplicationStartupComple
       session.replyMessage(messages);
       return;
     }
+    //校验权限 TODO
+//    session.getBind().getBotUser().getRoles().stream().collect()
+
     // 判断是否是帮助
     if (cmdDTO.help()) {
       // 获取帮助信息
@@ -152,6 +156,9 @@ public class CmdInterceptor implements IBotInterceptor, ApplicationStartupComple
     Method method = methodMap.get(subCmd);
     // 1 存在子命令匹配 进行参数以及方法调用
     if (method != null) {
+      //子命令参数列移除自己
+      List<String> subParams = cmdDTO.getSubParams();
+      subParams.removeIf(d->d.equals(subCmd));
       invokeMethod(cmd, method, cmdDTO, session);
     } else {
       // 不存在子命令匹配的 调用默认方法
@@ -167,6 +174,19 @@ public class CmdInterceptor implements IBotInterceptor, ApplicationStartupComple
 
     List<String> subParams = cmdDTO.getSubParams();
     Map<String, String> paramMap = cmdDTO.getParams();
+    //权限校验 获取是否需要权限
+
+    SubCmd subCmd = method.getAnnotation(SubCmd.class);
+    if (cmd.auth() && subCmd.auth()){
+      if (!hasAuth(session,cmd.masterCmdName(),subCmd.value())){
+        String cmdName = cmd.masterCmdName();
+        if (!StrUtil.equals(subCmd.value(), SubCmd.DEFAULT_VALUE)){
+          cmdName = cmdName + ":" + subCmd.value();
+        }
+        session.replyMessage("权限不足:" + cmdName);
+        return;
+      }
+    }
 
     for (int i = 0; i < parameters.length; i++) {
       Parameter parameter = parameters[i];
@@ -218,6 +238,7 @@ public class CmdInterceptor implements IBotInterceptor, ApplicationStartupComple
     try {
       method.invoke(cmd, params.toArray());
     } catch (Exception e) {
+      log.error("方法类部错误,{}",e);
       String errorMessage = "方法调用失败";
       Throwable cause = e.getCause();
       while (cause != null) {
@@ -230,5 +251,32 @@ public class CmdInterceptor implements IBotInterceptor, ApplicationStartupComple
       session.replyMessage(new Messages().text("命令执行错误:\r\n{}", errorMessage));
       log.error("方法调用失败:{}", method.getName(), cause);
     }
+  }
+
+  /**
+   * 是否拥有权限
+   * @param session 上下文
+   * @param masterCmdName  主命令
+   * @param subCmd 子命令
+   * @author yefeng
+   * {@date 2024-10-15 09:22:31}
+   * @since 1.0
+   * @return boolean
+   */
+  private boolean hasAuth(Session session,String masterCmdName,String subCmd){
+    Set<String> authCmds = session.getAuthCmds();
+    if (CollUtil.isEmpty(authCmds)){
+      return false;
+    }
+    //判断超级权限
+    if (authCmds.contains("*")){
+      return true;
+    }
+    //子命令是默认 判断是否存在主命令 也就是单独设置主命令和通配主命令都可以
+    if (StrUtil.equals(SubCmd.DEFAULT_VALUE,subCmd)){
+      return authCmds.contains(masterCmdName) || authCmds.contains(masterCmdName + ":*");
+    }
+    // 判断是否拥有权限
+    return authCmds.contains(masterCmdName + ":" + subCmd) || authCmds.contains(masterCmdName + ":*");
   }
 }

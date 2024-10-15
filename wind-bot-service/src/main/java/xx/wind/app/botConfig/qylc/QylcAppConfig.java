@@ -63,4 +63,6 @@ public class QylcAppConfig implements Serializable {
    * @see String 密码
    */
   private String password;
+
+  private String jwt;
 }

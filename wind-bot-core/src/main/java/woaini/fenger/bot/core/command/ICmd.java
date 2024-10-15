@@ -1,8 +1,6 @@
 package woaini.fenger.bot.core.command;
 
-/**
- * 标识这个类是一个命令
- */
+/** 标识这个类是一个命令 */
 public interface ICmd {
   /**
    * @MethodName value 匹配的命令 主命令
@@ -21,4 +19,15 @@ public interface ICmd {
    * @return {@link String } 描述
    */
   String description();
+
+  /**
+   * 是否需要权限
+   *
+   * @author yefeng {@date 2024-10-15 09:47:30}
+   * @since 1.0
+   * @return boolean
+   */
+  default boolean auth() {
+    return false;
+  }
 }

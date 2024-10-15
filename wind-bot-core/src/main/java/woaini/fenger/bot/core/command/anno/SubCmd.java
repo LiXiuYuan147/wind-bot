@@ -2,19 +2,19 @@ package woaini.fenger.bot.core.command.anno;
 
 import java.lang.annotation.*;
 
-
 /**
  * Subcmd
- * @see  woaini.fenger.bot.core.command.anno.SubCmd
- * @author yefeng
- * {@code @Date} 2023-05-16 16:50:39
- */@Target({ElementType.METHOD})
+ *
+ * @see woaini.fenger.bot.core.command.anno.SubCmd
+ * @author yefeng {@code @Date} 2023-05-16 16:50:39
+ */
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface SubCmd {
-    String DEFAULT_VALUE = "default";
+  String DEFAULT_VALUE = "default";
 
-    String value() default DEFAULT_VALUE;
+  String value() default DEFAULT_VALUE;
 
   /**
    * @MethodName description 子命令描述
@@ -24,4 +24,13 @@ public @interface SubCmd {
    * @return {@link String } 描述
    */
   String description() default "";
+
+  /**
+   * 是否需要权限 默认需要
+   *
+   * @author yefeng {@date 2024-10-15 09:40:46}
+   * @since 1.0
+   * @return boolean
+   */
+  boolean auth() default false;
 }

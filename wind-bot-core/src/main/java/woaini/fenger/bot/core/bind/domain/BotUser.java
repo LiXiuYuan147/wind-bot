@@ -2,6 +2,8 @@ package woaini.fenger.bot.core.bind.domain;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
@@ -36,4 +38,7 @@ public class BotUser implements Serializable {
    * @see String 昵称
    */
   private String nickName;
+
+  @ManyToMany(fetch=FetchType.EAGER)
+  private List<BotRole> roles;
 }

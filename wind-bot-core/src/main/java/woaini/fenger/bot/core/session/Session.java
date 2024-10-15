@@ -3,12 +3,18 @@ package woaini.fenger.bot.core.session;
 import cn.hutool.extra.spring.SpringUtil;
 import lombok.Data;
 import woaini.fenger.bot.core.bind.domain.BotBind;
+import woaini.fenger.bot.core.bind.domain.BotRole;
 import woaini.fenger.bot.core.bind.service.BotUserConfigService;
 import woaini.fenger.bot.core.bot.Bot;
 import woaini.fenger.bot.core.event.base.Event;
 import woaini.fenger.bot.core.event.message.impl.GroupMessageEvent;
 import woaini.fenger.bot.core.event.message.impl.PrivateMessageEvent;
 import woaini.fenger.bot.core.event.segment.Messages;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 会话
@@ -29,7 +35,17 @@ public class Session {
      */
     private Event event;
 
+    public void setBind(BotBind bind) {
+        this.bind = bind;
+        authCmds = new HashSet<>();
+        for (BotRole role : bind.getBotUser().getRoles()) {
+            authCmds.addAll(role.getCmds());
+        }
+    }
+
     private BotBind bind;
+
+    private Set<String> authCmds;
 
     /**
      * @MethodName replyMessage

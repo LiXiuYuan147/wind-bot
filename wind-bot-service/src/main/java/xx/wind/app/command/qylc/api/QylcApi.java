@@ -6,6 +6,7 @@ import cn.hutool.core.map.MapBuilder;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import com.alibaba.fastjson2.JSONObject;
 import java.math.RoundingMode;
 import java.util.Date;
@@ -19,16 +20,15 @@ import woaini.fenger.bot.core.json.JSONResult;
 import woaini.fenger.bot.core.utils.StringTemplateUtils;
 import xx.wind.app.botConfig.qylc.QylcAppConfig;
 
-
 /**
  * 在API中打卡
  *
- * @see woaini.fenger.command.qylc.api.ClockInApi
+ * @see QylcApi
  * @author yefeng {@code @Date} 2023-05-16 16:50:39
  */
 @UtilityClass
 @Slf4j
-public class ClockInApi {
+public class QylcApi {
 
   /**
    * @see String 主机
@@ -219,5 +219,34 @@ public class ClockInApi {
   public void randomLocation() {
     tmpLat = RandomUtil.randomDouble(minLat, maxLat, 13, RoundingMode.UP);
     tmpLng = RandomUtil.randomDouble(minLng, maxLng, 13, RoundingMode.UP);
+  }
+
+  /**
+   * 本周菜单
+   * @param userConfig 配置
+   * @param jwt jwt
+   * @author yefeng {@date 2024-10-15 11:24:47}
+   * @since 1.0
+   * @return {@link JSONResult }
+   */
+  public JSONResult foodMenu(QylcAppConfig userConfig, String jwt) {
+    var url = HOST + "/api/mddApp/activity/activityStatistics/activityStatisticsWeekMenu";
+    String body =
+        HttpRequest.get(url).headerMap(getDefaultHeader(userConfig, jwt), true).execute().body();
+    return handlerResult(body);
+  }
+
+  /**
+   * 校验token是否有效的接口
+   * @param userConfig 配置
+   * @param jwt jwt
+   * @author yefeng {@date 2024-10-15 11:24:47}
+   * @since 1.0
+   * @return {@link JSONResult }
+   */
+  public boolean verifyActivityStatistics(QylcAppConfig userConfig, String jwt) {
+    var url = HOST + "/api/mddApp/activity/activityStatistics/verifyActivityStatistics";
+    HttpResponse execute = HttpRequest.get(url).headerMap(getDefaultHeader(userConfig, jwt), true).execute();
+    return execute.getStatus() != 401;
   }
 }

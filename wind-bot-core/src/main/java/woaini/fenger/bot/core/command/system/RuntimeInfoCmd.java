@@ -25,8 +25,13 @@ public class RuntimeInfoCmd implements ICmd {
     return "获取主机内存情况";
   }
 
-  @SubCmd
+  @SubCmd(auth = true)
   public void run(Session session) {
     session.replyMessage(new Messages().text(SystemUtil.getRuntimeInfo().toString()));
+  }
+
+  @Override
+  public boolean auth() {
+    return true;
   }
 }

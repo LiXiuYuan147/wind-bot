@@ -73,6 +73,18 @@ public class CmdTool {
     return cmdDTO;
   }
 
+  public boolean existsSubCmd(ICmd cmd, String subCmd) {
+    Method[] methods =
+        ReflectUtil.getMethods(cmd.getClass(), x -> x.getAnnotation(SubCmd.class) != null);
+    for (Method method : methods) {
+      SubCmd subCmdAnnotation = method.getAnnotation(SubCmd.class);
+      if (subCmdAnnotation.value().equals(subCmd)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public String buildHelp(ICmd cmd) {
     StringBuilder sqlBuilder = new StringBuilder();
     Method[] methods =

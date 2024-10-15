@@ -3,6 +3,7 @@ package woaini.fenger.bot;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.TimeInterval;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.extra.qrcode.QrCodeUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.plexpt.chatgpt.ChatGPT;
 import com.plexpt.chatgpt.entity.chat.ChatCompletion;
@@ -21,7 +22,10 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 import xx.wind.app.BotApplication;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.File;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,38 +42,15 @@ public class BotApplicationTest extends AbstractTestNGSpringContextTests {
     System.load("/home/xiuyuan/下载/opencv-4.9.0/build/lib/libopencv_java490.so");
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args){
 
-
-    ChatGPT chatGPT = ChatGPT.builder()
-      .apiKey("sk-AFNPPcSe9utAy3rtI5eflTftn24I1GKDXtuh4r4cEVxnmvkY")
-      .apiHost("https://api.chatanywhere.tech/")
-      .build()
-      .init();
-
-    File file = FileUtil.newFile("/home/xiuyuan/图片/right.jpg");
-
-    Variations variations = Variations.ofB64_JSON(1, "256x256");
-
-    Generations generations = Generations.builder()
-      .prompt("一只可爱的小猫咪")
-      .model("dall-e-2")
-      .n(1)
-      .size("256x256")
-      .build();
-
-    ImagesRensponse imagesRensponse = chatGPT.imageGeneration(generations);
-    System.out.println(JSONObject.toJSONString(imagesRensponse));
-
-//    Message system = Message.ofSystem("你现在是一个诗人，专门写七言绝句");
-//    Message message = Message.of("写一段七言绝句诗，题目是：火锅！");
-//
-//    ChatCompletion chatCompletion = ChatCompletion.builder()
-//      .model("gpt-3.5-turbo-0125")
-//      .messages(Arrays.asList(system, message))
-//      .build();
-//
-//    ChatCompletionResponse response = chatGPT.chatCompletion(chatCompletion);
-//    System.out.println(response.toPlainString());
   }
+
+  public static Mat bufferedImageToMat(BufferedImage bi) {
+    Mat mat = new Mat(bi.getHeight(), bi.getWidth(), CvType.CV_8UC3);
+    byte[] data = ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
+    mat.put(0, 0, data);
+    return mat;
+  }
+
 }
